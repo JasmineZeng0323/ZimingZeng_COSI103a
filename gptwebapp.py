@@ -49,6 +49,6 @@ def getGPTResponse(num):
 
 
 if __name__ == '__main__':
-    APIKEY = "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"
+    APIKEY = "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"
     g = GPT(APIKEY)
     app.run(debug=True, port=5001)
