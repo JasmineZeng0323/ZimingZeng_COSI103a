@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Introduce</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static',filename='bg.jpg') }}");
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        div.transbox {
+            width: 1050px;
+            height: 500px;
+            margin: 90px 90px;
+            background-color: #ffffff;
+            border: 1px solid #FFFFFF;
+            opacity: 0.8;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2.ex1 {
+            margin-left: 5cm;
+        }
+
+        h3.ex1 {
+            margin-left: 5cm;
+        }
+
+        img.ex1 {
+            margin-left: 5cm;
+        }
+
+        p {
+            text-align: right;
+        }
+
+        p.ex1 {
+            margin-right: 2cm;
+        }
+
+        p {
+            color: mediumpurple
+        }
+
+        /*cc:change color*/
+        a.cc:visited {
+            color: #0000ff;
+        }
+
+        a.cc:hover {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+<div class="background">
+    <div class="transbox">
+        <h1>Individual Resume</h1>
+        <img src="{{ url_for('static',filename='avatar.jpg') }}" height="50px" width="50px" class="ex1"/>
+        <h2 class="ex1">Ziming Zeng</h2>
+        <h3 class="ex1">email：zimingzeng@brandeis.edu</h3>
+        <h3 class="ex1">university：<a class="cc" href="/">Brandeis University</a></h3>
+        <h3 class="ex1"><a class="cc" href="/">Back</a></h3>
+        <p class="ex1">The man was very lazy and had nothing left......</p>
+    </div>
+
+</div>
+</body>
+</html>
+

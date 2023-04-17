@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        body {
+            margin: 0 !important;
+            background: #f5f5f5;
+            --itemWidth: 400px
+        }
+
+        textarea {
+            height: 300px;
+            width: var(--itemWidth);
+            resize: none;
+            outline: none;
+            border-radius: 10px;
+            border: solid 1px #cbcbcb;
+            font-size: 1.2em;
+            padding: 10px;
+        }
+
+        p {
+            width: var(--itemWidth);
+        }
+
+        .main-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sub-container {
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 500px;
+        }
+
+        button {
+            background-color: #339af0;
+            border: solid 1px #339af0;
+            color: white;
+            height: 40px;
+            width: 80px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        button:active {
+            box-shadow: 0px 0px 20px rgba(238, 238, 238, 0.2) inset;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="sub-container">
+        <p>Please enter your question:</p>
+        {% if pretext!='' %}
+        <p style="font-size: 0.6em;color: red">{{pretext}}</p>
+        {% endif %}
+        <textarea id="inputV"></textarea>
+        <button id="submit">Submit</button>
+        <button onclick="location.href='/'">Back</button>
+    </div>
+    <div class="sub-container">
+        <p>GPT robot answer:</p>
+        <textarea id="outV" readonly></textarea>
+    </div>
+</div>
+</body>
+
+<script>
+    document.getElementById("submit").onclick = function (e) {
+        //input Value
+        const inputV=document.getElementById("inputV").value
+        document.getElementById("outV").value="Waiting for news from the GPT robot"
+        $.post("/getGPTResponse/{{ type }}",{input:inputV},function (e) {
+            document.getElementById("outV").value=e.out
+        })
+    }
+</script>
+</html>
