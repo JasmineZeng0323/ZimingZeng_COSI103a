@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" />
+
+    <!-- jQuery library -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style>
+        .panel {
+            padding: 10vh;
+        }
+        
+        .my-form {
+            width: 20vw;
+        }
+        
+        .my-btn-group {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="panel" id="app">
+        <div class="panel" id="app">
+            <div class="mb-3 my-btn-group">
+                <button class="btn btn-primary" @click="groupByCategory">
+            Group by category
+          </button>
+                <button class="btn btn-primary" @click="sortByCategory">
+            Sort by category
+          </button>
+                <button class="btn btn-primary" @click="sortByAmount">
+            Sort by amount
+          </button>
+                <button class="btn btn-primary" @click="sortByDescription">
+            Sort by description
+          </button>
+                <button class="btn btn-primary" @click="sortByDate">
+            Sort by date
+          </button>
+            </div>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>description</th>
+                        <th>amount</th>
+                        <th>category</th>
+                        <th>date</th>
+                        <th>delete</th>
+                        <th>edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(transaction, index) in transactions" :key="index">
+                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.category }}</td>
+                        <td>{{ transaction.date }}</td>
+                        <td>
+                            <button class="btn btn-danger" @click="deleteTransaction(transaction)">
+                  Delete
+                </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" @click="editMode = index">
+                  Edit
+                </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div v-if="editMode !== null">
+            <h2>Edit Transaction</h2>
+            <div class="my-form">
+                <form @submit.prevent="updateTransaction">
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <input type="text" class="form-control" id="description" name="description" v-model="transactions[editMode].description" />
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="text" class="form-control" id="amount" name="amount" v-model="transactions[editMode].amount" />
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <input type="text" class="form-control" id="category" name="category" v-model="transactions[editMode].category" />
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="text" class="form-control" id="date" name="date" v-model="transactions[editMode].date" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button class="btn btn-secondary" @click="editMode = null">
+              Cancel
+            </button>
+                </form>
+            </div>
+        </div>
+
+        <div v-else>
+            <h2>Add a New Transaction</h2>
+            <div class="my-form">
+                <form @submit.prevent="addTransaction">
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <input type="text" class="form-control" id="description" name="description" v-model="newTransaction.description" />
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="text" class="form-control" id="amount" name="amount" v-model="newTransaction.amount" />
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <input type="text" class="form-control" id="category" name="category" v-model="newTransaction.category" />
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="text" class="form-control" id="date" name="date" v-model="newTransaction.date" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            async created() {
+                // To send a GET request using fetch, we can use the following code:
+                await fetch(`http://127.0.0.1:3000/transactions`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // handle the response data here
+                        console.log(data);
+                        this.transactions = data;
+                    })
+                    .catch((error) => {
+                        // handle any errors here
+                        console.log(error);
+                    });
+                // We can use the URLSearchParams API to get the value of the "sortBy" parameter from the URL query string
+                const urlParams = new URLSearchParams(window.location.search);
+                const sortBy = urlParams.get("sortBy"); // this will return the value of the "sortBy" parameter in the URL query string
+                console.log(sortBy);
+                switch (sortBy) {
+                    case "category":
+                        this.sortByCategory();
+                        break;
+                    case "amount":
+                        this.sortByAmount();
+                        break;
+                    case "description":
+                        this.sortByDescription();
+                        break;
+                    case "date":
+                        this.sortByDate();
+                        break;
+                }
+            },
+            data: {
+                transactions: [{
+                    description: "Groceries",
+                    amount: 50,
+                    category: "Food",
+                    date: "2022-01-01",
+                }, {
+                    description: "Gas",
+                    amount: 30,
+                    category: "Transportation",
+                    date: "2022-01-02",
+                }, {
+                    description: "Movie",
+                    amount: 15,
+                    category: "Entertainment",
+                    date: "2022-01-03",
+                }, ],
+                newTransaction: {
+                    description: "",
+                    amount: "",
+                    category: "",
+                    date: "",
+                },
+                editMode: null,
+            },
+            methods: {
+                addTransaction: function() {
+                    // this.transactions.push({
+                    //     description: this.newTransaction.description,
+                    //     amount: this.newTransaction.amount,
+                    //     category: this.newTransaction.category,
+                    //     date: this.newTransaction.date
+                    // });
+
+                    fetch("http://127.0.0.1:3000/transactions", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                description: this.newTransaction.description,
+                                amount: this.newTransaction.amount,
+                                category: this.newTransaction.category,
+                                date: this.newTransaction.date,
+                            }),
+                        })
+                        .then((response) => {
+                            // handle the response data here
+                            location.reload();
+                        })
+                        .catch((error) => {
+                            // handle any errors here
+                            console.log(error);
+                        });
+
+                    this.newTransaction.description = "";
+                    this.newTransaction.amount = "";
+                    this.newTransaction.category = "";
+                    this.newTransaction.date = "";
+                },
+                deleteTransaction: function(transaction) {
+                    // var index = this.transactions.indexOf(transaction);
+                    // this.transactions.splice(index, 1);
+
+                    fetch(`http://127.0.0.1:3000/transactions/${transaction._id}`, {
+                            method: "DELETE",
+                        })
+                        .then((response) => {
+                            // handle the response here
+                            console.log(response);
+                            location.reload();
+                        })
+                        .catch((error) => {
+                            // handle any errors here
+                            console.log(error);
+                        });
+                },
+                editTransaction: function(transaction) {
+                    this.editMode = this.transactions.indexOf(transaction);
+                },
+                updateTransaction: function() {
+                    // console.log(123)
+
+                    fetch(
+                            `http://127.0.0.1:3000/transactions/${
+                this.transactions[this.editMode]._id
+              }`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    description: this.transactions[this.editMode].description,
+                                    amount: this.transactions[this.editMode].amount,
+                                    category: this.transactions[this.editMode].category,
+                                    date: this.transactions[this.editMode].date,
+                                }),
+                            }
+                        )
+                        .then((response) => {
+                            // handle the response data here
+                            location.reload();
+                        })
+                        .catch((error) => {
+                            // handle any errors here
+                            console.log(error);
+                        });
+
+                    this.editMode = null;
+                },
+                groupByCategory() {
+                    // Redirect to category.html page using the window.location.href property
+                    window.location.href = "/transaction/byCategory";
+                },
+                sortByCategory() {
+                    // Sort transactions by category and display sortBy=category in the URL
+                    // This function sorts the transactions array by category using the localeCompare method, which compares strings in a natural way, taking into account the language and cultural differences. It is used in the sortByCategory method to display the transactions sorted by category and update the URL with the sortBy=category parameter.
+                    this.transactions.sort((a, b) =>
+                        a.category.localeCompare(b.category)
+                    );
+
+                    window.history.pushState(null, null, "?sortBy=category");
+                },
+
+                sortByAmount() {
+                    this.transactions.sort((a, b) => a.amount - b.amount);
+
+                    window.history.pushState(null, null, "?sortBy=amount");
+                },
+                sortByDescription() {
+                    this.transactions.sort((a, b) =>
+                        a.description.localeCompare(b.description)
+                    );
+
+                    window.history.pushState(null, null, "?sortBy=description");
+                },
+                sortByDate() {
+                    this.transactions.sort(
+                        (a, b) => new Date(a.date) - new Date(b.date)
+                    );
+
+                    window.history.pushState(null, null, "?sortBy=date");
+                },
+            },
+        });
+    </script>
+</body>
+
+</html>

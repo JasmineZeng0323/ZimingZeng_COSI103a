@@ -1,0 +1,5 @@
+Use 'npm install' to install dependencies
+
+Input the 'node app.js' to open server and the server's port is 3000
+
+The browser input 'http://127.0.0.1:3000/transaction' can see the interface

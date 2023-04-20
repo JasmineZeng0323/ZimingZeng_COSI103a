@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style>
+        .panel {
+            padding: 10vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="panel">
+        <ul>
+            <li><a href="/transaction">transaction table</a></li>
+        </ul>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>category</th>
+                    <th>amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in items">
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.amount }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#app",
+            async created() {
+                await fetch(`http://127.0.0.1:3000/categories`)
+                    .then(async(response) => await response.json())
+                    .then(async(data) => {
+                        // handle the response data here
+                        console.log(data);
+                        this.items = data;
+                    })
+                    .catch((error) => {
+                        // handle any errors here
+                        console.log(error);
+                    });
+            },
+            data: {
+                items: [{
+                    category: "Category 1",
+                    amount: 100,
+                }, {
+                    category: "Category 2",
+                    amount: 200,
+                }, {
+                    category: "Category 3",
+                    amount: 300,
+                }, ],
+            },
+        });
+    </script>
+</body>
+
+</html>
